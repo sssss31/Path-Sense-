@@ -1,0 +1,8 @@
+backend
+docs
+scripts
+docker-compose.yml
+docker-compose.test.yml
+run.bat
+run.sh
+*.md

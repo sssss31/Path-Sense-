@@ -7,3 +7,11 @@ Deploy the frontend with only `NEXT_PUBLIC_API_BASE_URL`. Gemini and weather key
 
 ## Deployment profiles
 **DEMO:** `USE_MOCK_DATA=true`, SQLite allowed, deterministic routes/weather/terrain and simulated hazard seeds, no external dependency (OSM tiles optional). **PRODUCTION/LIVE:** `APP_ENV=production`, `USE_MOCK_DATA=false`, PostgreSQL + PostGIS required (startup fails with SQLite unless `SQLITE_IN_PRODUCTION_POLICY=warn`), strong `JWT_SECRET`, `OPENWEATHER_API_KEY`, authoritative datasets imported, simulated datasets excluded automatically, Redis and Gemini optional. External map layers are limited to `EXTERNAL_LAYER_ALLOWED_HOSTS` (`BHUVAN_FLOOD_WMS_URL`, `BHUVAN_FLOOD_LAYERS`). `GET /system/readiness` and `GET /system/health` report database, PostGIS, providers, Redis, hazard datasets (registry summary only) and external layer status.
+
+## Vercel (frontend only)
+
+The repository is a monorepo (backend + frontend), so the root `vercel.json` tells Vercel to build only the Next.js app in `frontend/` with `@vercel/next`; `.vercelignore` keeps the backend out of the upload. Alternatively set **Root Directory = frontend** in the Vercel project settings and delete `vercel.json`.
+
+Vercel environment variables: `NEXT_PUBLIC_API_BASE_URL` (public backend URL + `/api/v1`) and optionally `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`. Redeploy after changing them; they are inlined at build time.
+
+The FastAPI backend and PostGIS cannot run on Vercel: host the backend on Render/Railway/Fly/a VM (use `backend/Dockerfile`, which runs migrations) with a managed PostGIS (Neon or Supabase, run `CREATE EXTENSION postgis;` once), and set its `ALLOWED_ORIGINS` to the exact Vercel URL, e.g. `["https://your-app.vercel.app"]`, otherwise the browser reports "Failed to fetch" on login.
