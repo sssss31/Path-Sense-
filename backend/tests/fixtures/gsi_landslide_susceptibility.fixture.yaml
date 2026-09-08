@@ -1,0 +1,63 @@
+dataset:
+  name: SYNTHETIC GSI National Landslide Susceptibility Map
+  slug: test_gsi_landslide_susceptibility
+  provider: Bhukosh (GSI geoportal)
+  source_organization: Geological Survey of India
+  source_url: https://bhukosh.gsi.gov.in/Bhukosh/Public
+  dataset_version: synthetic-fixture-1
+  license: synthetic test fixture
+  attribution: "Landslide susceptibility \xA9 Geological Survey of India (NLSM, Bhukosh)"
+  hazard_category: landslide
+  data_type: risk_zones
+  layer_type: landslide_susceptibility
+  provenance_type: historical
+  coverage_area: "Guwahati\u2013Shillong corridor (synthetic fixture)"
+  period_start: '2020-01-01'
+  period_end: '2024-12-31'
+  crs: EPSG:4326
+  access_method: Manual download from Bhukosh after registration; shapefile -> GeoJSON
+    via ogr2ogr
+  source_metadata:
+    note: synthetic fixture shaped like the official schema; not real data
+  coverage_bbox:
+  - 91.2
+  - 25.3
+  - 92.2
+  - 26.3
+mapping:
+  category:
+  - Hazard
+  - hazard_type
+  - category
+  severity:
+  - LSZ
+  - LSZ_Class
+  - Class
+  - Susceptib
+  - Sus_Class
+  - Susceptibility
+  - CLASS
+  description:
+  - Remarks
+  - Description
+  - Toposheet
+  - Sheet_No
+  external_id:
+  - OBJECTID
+  - FID
+  - Zone_ID
+  - id
+transforms:
+  category:
+  - strip
+  - lowercase
+  - name: category_map
+    default: landslide
+  severity:
+  - name: susceptibility_map
+defaults:
+  category: landslide
+required:
+- geometry
+- severity
+duplicate_mode: skip-existing

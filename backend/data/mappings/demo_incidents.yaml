@@ -1,0 +1,27 @@
+# SIMULATED demo seed. Not an authoritative dataset.
+dataset:
+  name: "Demo Simulated Incident Register (Guwahati–Shillong corridor)"
+  slug: demo-simulated-incidents
+  provider: PathSense demo seed
+  source_organization: PathSense (synthetic)
+  dataset_version: "demo-1"
+  license: "Synthetic data, no restrictions"
+  hazard_category: landslide
+  data_type: incidents
+  provenance_type: simulated
+  coverage_area: "Guwahati–Shillong corridor (synthetic)"
+  coverage_bbox: [91.3, 25.4, 92.2, 26.3]
+  crs: EPSG:4326
+format: csv
+mapping:
+  latitude: [latitude]
+  longitude: [longitude]
+  category: [category]
+  severity: [severity]
+  date: [occurred_at]
+  description: [description]
+  external_id: [incident_id]
+transforms:
+  category: [strip, lowercase, category_map]
+  severity: [{name: severity_map}]
+  date: [parse_date]

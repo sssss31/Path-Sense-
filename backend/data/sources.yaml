@@ -1,0 +1,77 @@
+# Source manifest: describes authoritative hazard datasets the platform knows how to ingest.
+# No secrets here. Access methods were verified on 2026-09-07 (see docs/authoritative-data.md).
+datasets:
+  - slug: gsi_landslide_inventory
+    name: GSI Field-Validated Landslide Inventory (Bhukosh / Bhusanket)
+    organization: Geological Survey of India
+    type: historical_incident
+    category: landslide
+    layer_type: landslide_inventory
+    provenance: historical
+    source_url: https://bhukosh.gsi.gov.in/Bhukosh/Public
+    portal_url: https://bhusanket.gsi.gov.in/
+    access:
+      verified_mechanisms:
+        - "Bhukosh public portal: shapefile download after free registration (manual); not reachable from the build network on 2026-09-07."
+        - "Bhusanket ArcGIS REST (gisserver/rest/services/Hosted/India_All_Landslided/FeatureServer/0): returns 'Token Required' (499) anonymously; no automated access without credentials."
+      automated_download: false
+      manual_steps: docs/authoritative-data.md#gsi-landslide-inventory
+    expected_crs: EPSG:4326
+    expected_geometry: Point
+    mapping_file: data/mappings/gsi_landslide_inventory.yaml
+    ui_wording: "Historical Landslide Inventory"
+    never_label_as: "Live landslide alert"
+  - slug: gsi_landslide_susceptibility
+    name: GSI National Landslide Susceptibility Mapping (NLSM) - state layer
+    organization: Geological Survey of India
+    type: risk_zone
+    category: landslide
+    layer_type: landslide_susceptibility
+    provenance: historical
+    source_url: https://bhukosh.gsi.gov.in/Bhukosh/Public
+    access:
+      verified_mechanisms:
+        - "Bhukosh public portal: susceptibility polygons (1:50K NLSM) as shapefile after free registration (manual)."
+        - "Bhusanket ArcGIS ImageServer (GSI/Susceptibility/ImageServer) is raster and token-protected; not vector, not used."
+      automated_download: false
+      manual_steps: docs/authoritative-data.md#gsi-landslide-susceptibility
+    expected_crs: EPSG:4326
+    expected_geometry: Polygon/MultiPolygon
+    mapping_file: data/mappings/gsi_landslide_susceptibility.yaml
+    class_mapping: app.core.domain.SUSCEPTIBILITY_MAPPING
+    ui_wording: "Landslide Susceptibility (very low … very high)"
+  - slug: nrsc_flood_hazard_assam
+    name: NRSC Flood Hazard Zonation (Assam) - vector, if obtained
+    organization: NRSC / ISRO
+    type: risk_zone
+    category: flood
+    layer_type: flood_hazard
+    provenance: historical
+    source_url: https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood_hz
+    access:
+      verified_mechanisms:
+        - "No anonymous vector download found; NDEM/Bhuvan publish atlases (PDF) and WMS visualisation."
+      automated_download: false
+      manual_steps: docs/authoritative-data.md#nrsc-flood-hazard
+    expected_crs: EPSG:4326
+    expected_geometry: Polygon/MultiPolygon
+    mapping_file: data/mappings/nrsc_flood_hazard.yaml
+    ui_wording: "Historical Flood Hazard"
+  - slug: bhuvan_flood_inundation_wms
+    name: Bhuvan OGC Web Service of Disaster Datasets - Flood (Assam annual inundation 1998-2010, dated 2011-2013 events)
+    organization: NRSC / ISRO (Bhuvan)
+    type: remote_wms_layer
+    category: flood
+    layer_type: flood_inundation
+    provenance: historical
+    service_url: https://bhuvan-ras2.nrsc.gov.in/cgi-bin/flood.exe
+    access:
+      verified_mechanisms:
+        - "WMS 1.1.1 GetCapabilities/GetMap anonymous, EPSG:4326, image/png (verified 2026-09-07, 121 layers)."
+      automated_download: false
+      note: "Raster visualisation only; rendered as a remote layer, never converted into polygons."
+    layers: [as_fld_1998, as_fld_1999, as_fld_2000, as_fld_2001, as_fld_2002, as_fld_2003, as_fld_2004, as_fld_2005, as_fld_2006, as_fld_2007, as_fld_2008, as_fld_2009, as_fld_2010]
+    bbox: [89.7, 24.13, 96.02, 27.97]
+    attribution: "Flood layers © NRSC/ISRO Bhuvan"
+    ui_wording: "Historical Flood Inundation"
+    never_label_as: "Current Flood Alert"

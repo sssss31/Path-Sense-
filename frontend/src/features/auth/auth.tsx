@@ -1,0 +1,7 @@
+"use client";
+import {createContext,useContext,useEffect,useState} from "react";import {useRouter} from "next/navigation";
+type User={id:string;email:string;role:string};type Auth={user:User|null;loading:boolean;logout:()=>void;token:()=>string|null};
+const Context=createContext<Auth|null>(null);const BASE=process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:8000/api/v1";
+export function AuthProvider({children}:{children:React.ReactNode}){const[user,setUser]=useState<User|null>(null);const[loading,setLoading]=useState(true);const router=useRouter();const token=()=>typeof window==="undefined"?null:localStorage.getItem("pathsense_token");useEffect(()=>{const value=token();if(!value){setLoading(false);router.replace("/login");return}fetch(`${BASE}/auth/me`,{headers:{Authorization:`Bearer ${value}`}}).then(r=>r.ok?r.json():Promise.reject()).then(setUser).catch(()=>{localStorage.removeItem("pathsense_token");router.replace("/login")}).finally(()=>setLoading(false))},[router]);function logout(){localStorage.removeItem("pathsense_token");setUser(null);router.replace("/login")}return <Context.Provider value={{user,loading,logout,token}}>{children}</Context.Provider>}
+export function useAuth(){const value=useContext(Context);if(!value)throw new Error("useAuth requires AuthProvider");return value}
+export function Protected({children}:{children:React.ReactNode}){const{user,loading}=useAuth();if(loading)return <div className="statePage">Loading secure workspace…</div>;if(!user)return null;return <>{children}</>}

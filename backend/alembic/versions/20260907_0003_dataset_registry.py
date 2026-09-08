@@ -1,0 +1,12 @@
+"""dataset registry and feature fingerprints"""
+from alembic import op
+import sqlalchemy as sa
+revision="20260907_0003";down_revision="20260907_0002";branch_labels=None;depends_on=None
+def upgrade():
+    op.create_table("dataset_sources",sa.Column("id",sa.Uuid(),primary_key=True),sa.Column("name",sa.String(255),nullable=False),sa.Column("slug",sa.String(120),nullable=False,unique=True),sa.Column("provider",sa.String(160),nullable=False),sa.Column("hazard_category",sa.String(40),nullable=False),sa.Column("data_type",sa.String(40),nullable=False),sa.Column("source_url",sa.Text()),sa.Column("source_organization",sa.String(255),nullable=False),sa.Column("dataset_version",sa.String(80),nullable=False),sa.Column("published_at",sa.DateTime(timezone=True)),sa.Column("downloaded_at",sa.DateTime(timezone=True)),sa.Column("ingested_at",sa.DateTime(timezone=True)),sa.Column("record_count",sa.Integer(),nullable=False,server_default="0"),sa.Column("crs",sa.String(30),nullable=False),sa.Column("coverage_area",sa.String(255)),sa.Column("coverage_bbox",sa.JSON()),sa.Column("status",sa.String(20),nullable=False),sa.Column("is_live",sa.Boolean(),nullable=False),sa.Column("provenance_type",sa.String(20),nullable=False),sa.Column("license",sa.String(160)),sa.Column("metadata",sa.JSON(),nullable=False),sa.Column("created_at",sa.DateTime(timezone=True),nullable=False),sa.Column("updated_at",sa.DateTime(timezone=True),nullable=False));op.create_index("ix_dataset_sources_slug","dataset_sources",["slug"],unique=True);op.create_index("ix_dataset_sources_status","dataset_sources",["status"]);op.create_index("ix_dataset_sources_created_at","dataset_sources",["created_at"])
+    for table in ["risk_zones","historical_incidents"]:
+        op.add_column(table,sa.Column("dataset_source_id",sa.Uuid()));op.add_column(table,sa.Column("fingerprint",sa.String(64)));op.create_foreign_key(f"fk_{table}_dataset_source_id_dataset_sources",table,"dataset_sources",["dataset_source_id"],["id"]);op.create_index(f"ix_{table}_dataset_source_id",table,["dataset_source_id"]);op.create_index(f"ix_{table}_fingerprint",table,["fingerprint"],unique=True)
+def downgrade():
+    for table in ["historical_incidents","risk_zones"]:
+        op.drop_index(f"ix_{table}_fingerprint",table_name=table);op.drop_index(f"ix_{table}_dataset_source_id",table_name=table);op.drop_constraint(f"fk_{table}_dataset_source_id_dataset_sources",table,type_="foreignkey");op.drop_column(table,"fingerprint");op.drop_column(table,"dataset_source_id")
+    op.drop_table("dataset_sources")

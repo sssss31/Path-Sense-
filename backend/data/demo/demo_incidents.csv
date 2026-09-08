@@ -1,0 +1,5 @@
+incident_id,latitude,longitude,category,severity,occurred_at,description
+DEMO-INC-001,25.905,91.885,Landslide,High,2023-07-15T04:00:00Z,Synthetic debris flow blocking carriageway (demo only)
+DEMO-INC-002,25.670,91.895,Landslide,Very High,2022-06-03T02:30:00Z,Synthetic rockfall near Umiam (demo only)
+DEMO-INC-003,26.080,91.740,Flood,Moderate,2024-08-21T09:00:00Z,Synthetic waterlogging (demo only)
+DEMO-INC-004,25.470,91.370,Landslide,Low,2021-09-10T07:00:00Z,Synthetic incident far from corridor (demo only)

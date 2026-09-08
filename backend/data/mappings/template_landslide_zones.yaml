@@ -1,0 +1,32 @@
+# Template mapping for a historical landslide inventory (GeoJSON polygons).
+# Copy, fill in the dataset block, and adjust property names for your file.
+dataset:
+  name: "<Dataset name, e.g. Meghalaya Historical Landslide Inventory>"
+  slug: "<unique-slug>"
+  provider: "<publisher / portal>"
+  source_organization: "<e.g. Geological Survey of India>"
+  source_url: "<https://...>"
+  dataset_version: "<e.g. 2024-03>"
+  published_at: "<ISO date>"
+  license: "<licence text or URL>"
+  hazard_category: landslide          # landslide | flood | road_closure | construction | bridge_risk | other
+  data_type: risk_zones               # risk_zones | incidents
+  provenance_type: historical         # live | historical | estimated | simulated
+  coverage_area: "<e.g. Meghalaya>"
+  coverage_bbox: [89.8, 25.0, 92.9, 26.2]   # [min_lon, min_lat, max_lon, max_lat]; omit to derive from data
+  crs: EPSG:4326
+mapping:
+  category: [hazard_type, type, category]
+  severity: [risk_level, severity, class]
+  date: [event_date, date, occurred_on]
+  description: [description, remarks, details]
+  external_id: [id, feature_id]
+transforms:
+  category: [strip, lowercase, category_map]
+  severity: [{name: severity_map, table: {"very high": 5, "high": 4, "moderate": 3, "low": 2, "very low": 1}}]
+  date: [parse_date]
+defaults:
+  category: landslide
+  severity: 3
+required: [geometry]
+duplicate_mode: skip-existing

@@ -1,0 +1,13 @@
+services:
+  test-db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: pathsense_test
+      POSTGRES_USER: pathsense_test
+      POSTGRES_PASSWORD: pathsense_test
+    ports: ["55432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pathsense_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 20

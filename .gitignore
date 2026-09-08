@@ -1,0 +1,16 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+node_modules/
+.next/
+dist/
+*.pyc
+
+.env.local
+*.db
+*.log
+frontend/tsconfig.tsbuildinfo
+backend/data/gsi/reports/
+.claude/
+.DS_Store

@@ -1,0 +1,4 @@
+{"type":"FeatureCollection","name":"SYNTHETIC FHZ-shaped flood hazard sample","features":[
+{"type":"Feature","properties":{"OBJECTID":11,"Hazard_Cat":"High","District":"Kamrup"},"geometry":{"type":"Polygon","coordinates":[[[91.70,26.05],[91.78,26.05],[91.78,26.11],[91.70,26.11],[91.70,26.05]]]}},
+{"type":"Feature","properties":{"OBJECTID":12,"Hazard_Cat":"Low","District":"Kamrup"},"geometry":{"type":"Polygon","coordinates":[[[91.20,26.20],[91.25,26.20],[91.25,26.25],[91.20,26.25],[91.20,26.20]]]}}
+]}

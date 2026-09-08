@@ -1,0 +1,2 @@
+export function Score({score,status}:{score:number;status:string}){return <div className="score"><div className="scoreRing" style={{"--score":`${score*3.6}deg`} as React.CSSProperties}><div><strong>{score}</strong><span>/100</span></div></div><div><span className="eyebrow">ACCESSIBILITY SCORE</span><h2>{status.replace("_"," ")}</h2><p>{score>=70?"Recommended for planned dispatch":score>=50?"Dispatch with mitigation":"Not recommended without review"}</p></div></div>}
+

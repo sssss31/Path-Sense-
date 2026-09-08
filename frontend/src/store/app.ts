@@ -1,0 +1,5 @@
+import {create} from "zustand";
+export type MapProvider="google"|"osm";
+type State={selectedRoute:string;emergency:boolean;sidebar:boolean;mapProvider:MapProvider;focusPoint:{lat:number;lng:number;key:number}|null;setRoute:(id:string)=>void;toggleEmergency:()=>void;toggleSidebar:()=>void;setMapProvider:(p:MapProvider)=>void;focusOn:(lat:number,lng:number)=>void};
+const initialProvider=():MapProvider=>{try{const v=typeof window!=="undefined"?localStorage.getItem("pathsense_map_provider"):null;return v==="osm"||v==="google"?v:"google"}catch{return "google"}};
+export const useAppStore=create<State>((set)=>({selectedRoute:"route-2",emergency:false,sidebar:true,mapProvider:initialProvider(),focusPoint:null,setRoute:(selectedRoute)=>set({selectedRoute}),toggleEmergency:()=>set(s=>({emergency:!s.emergency})),toggleSidebar:()=>set(s=>({sidebar:!s.sidebar})),setMapProvider:(mapProvider)=>{try{localStorage.setItem("pathsense_map_provider",mapProvider)}catch{}set({mapProvider})},focusOn:(lat,lng)=>set({focusPoint:{lat,lng,key:Date.now()}})}));

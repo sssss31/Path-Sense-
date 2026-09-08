@@ -1,0 +1,21 @@
+.chartBlock{display:grid;gap:8px}
+.chartEmpty{min-height:150px;display:grid;place-items:center;color:#7d8992;font-size:11px;text-align:center}
+.chartTip{background:#fff;border:1px solid #dfe4e8;border-radius:7px;padding:8px 10px;box-shadow:0 6px 18px #17304f14;display:grid;gap:2px;font-size:11px}
+.chartTip strong{color:#17212b}.chartTip span{color:#5b6771}
+.chartTable{font-size:10px;color:#5b6771}
+.chartTable summary{cursor:pointer;font-weight:700;color:#4b5963}
+.chartTable table{width:100%;border-collapse:collapse;margin-top:6px}
+.chartTable th,.chartTable td{text-align:left;padding:5px 6px;border-bottom:1px solid #edf0f2}
+.filterRow{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px}
+.filterRow label{display:grid;gap:4px;font-size:9px;font-weight:700;color:#60707d;text-transform:uppercase;letter-spacing:.5px}
+.filterRow input{height:34px;font-size:11px}
+.segmented{display:inline-flex;border:1px solid #dce3e8;border-radius:7px;overflow:hidden;background:#fff}
+.segmented button{border:0;background:transparent;padding:0 12px;height:34px;font-size:11px;font-weight:600;color:#4b5963}
+.segmented button.on{background:#1f66ed;color:#fff}
+.rangeNote{font-size:10px;color:#7d8992;padding-bottom:9px}
+.contentGrid.three{grid-template-columns:1fr 1fr 1fr}
+.contentGrid.equal{grid-template-columns:1fr 1fr 1fr}
+.dataCard h2 small{font-weight:500;color:#7d8992;margin-left:8px;font-size:10px}
+.recentTable td a{color:#1f66ed;font-weight:700;text-decoration:none}
+@media(max-width:1100px){.contentGrid.three,.contentGrid.equal{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.contentGrid.three,.contentGrid.equal{grid-template-columns:1fr}}

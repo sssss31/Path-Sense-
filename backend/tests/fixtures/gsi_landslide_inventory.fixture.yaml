@@ -1,0 +1,90 @@
+dataset:
+  name: SYNTHETIC GSI Field-Validated Landslide Inventory
+  slug: test_gsi_landslide_inventory
+  provider: Bhukosh (GSI geoportal)
+  source_organization: Geological Survey of India
+  source_url: https://bhukosh.gsi.gov.in/Bhukosh/Public
+  dataset_version: synthetic-fixture-1
+  license: synthetic test fixture
+  attribution: "Landslide inventory \xA9 Geological Survey of India (Bhukosh)"
+  hazard_category: landslide
+  data_type: incidents
+  layer_type: landslide_inventory
+  provenance_type: historical
+  coverage_area: "Guwahati\u2013Shillong corridor (synthetic fixture)"
+  period_start: '2020-01-01'
+  period_end: '2024-12-31'
+  crs: EPSG:4326
+  access_method: Manual download from Bhukosh after registration; converted with ogr2ogr
+    (see app/ingestion/sources/gsi.py)
+  source_metadata:
+    note: synthetic fixture shaped like the official schema; not real data
+  coverage_bbox:
+  - 91.2
+  - 25.3
+  - 92.2
+  - 26.3
+format: csv
+mapping:
+  latitude:
+  - Latitude
+  - LATITUDE
+  - lat
+  - Y
+  longitude:
+  - Longitude
+  - LONGITUDE
+  - lon
+  - long
+  - X
+  category:
+  - Type_of_Mo
+  - Type_of_movement
+  - Landslide_Type
+  - TYPE
+  - category
+  severity:
+  - Damage
+  - Severity
+  - Impact
+  date:
+  - Date_of_Oc
+  - Date_of_Occurrence
+  - Event_Date
+  - DATE
+  - Year
+  description:
+  - Remarks
+  - Description
+  - Location
+  - Place
+  external_id:
+  - LS_ID
+  - Landslide_ID
+  - OBJECTID
+  - FID
+  - id
+transforms:
+  category:
+  - strip
+  - lowercase
+  - name: category_map
+    default: landslide
+  severity:
+  - name: severity_map
+  date:
+  - name: parse_date
+    formats:
+    - '%d-%m-%Y'
+    - '%d/%m/%Y'
+    - '%Y-%m-%d'
+    - '%Y'
+  description:
+  - strip
+defaults:
+  category: landslide
+  severity: 3
+required:
+- geometry
+- date
+duplicate_mode: skip-existing

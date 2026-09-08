@@ -1,0 +1,6 @@
+LS_ID,Latitude,Longitude,State,District,Type_of_Mo,Date_of_Oc,Damage,Remarks
+SYN-GSI-0001,25.905,91.885,Meghalaya,Ri Bhoi,Debris Slide,14-07-2023,,Synthetic record shaped like Bhukosh inventory (near NH-6)
+SYN-GSI-0002,25.692,91.944,Meghalaya,East Khasi Hills,Rock Fall,02-06-2022,High,Synthetic record near Umiam
+SYN-GSI-0003,25.470,91.370,Meghalaya,West Khasi Hills,Debris Flow,2021,,Synthetic record far from corridor (year only)
+SYN-GSI-0004,25.590,91.880,Meghalaya,East Khasi Hills,Slump,,,Synthetic record without date (must be rejected: no invented date)
+SYN-GSI-0005,,91.900,Meghalaya,East Khasi Hills,Debris Slide,01-01-2020,,Synthetic record missing latitude (must be rejected)

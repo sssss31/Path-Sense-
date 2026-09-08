@@ -1,0 +1,24 @@
+# SIMULATED demo seed. Not an authoritative dataset. Used by demo mode and integration tests only.
+dataset:
+  name: "Demo Simulated Hazard Zones (Guwahati–Shillong corridor)"
+  slug: demo-simulated-hazard-zones
+  provider: PathSense demo seed
+  source_organization: PathSense (synthetic)
+  dataset_version: "demo-1"
+  license: "Synthetic data, no restrictions"
+  hazard_category: landslide
+  data_type: risk_zones
+  provenance_type: simulated
+  coverage_area: "Guwahati–Shillong corridor (synthetic)"
+  coverage_bbox: [91.3, 25.4, 92.2, 26.3]
+  crs: EPSG:4326
+mapping:
+  category: [hazard_type]
+  severity: [risk_level]
+  date: [event_date]
+  description: [remarks]
+  external_id: [feature_id]
+transforms:
+  category: [strip, lowercase, category_map]
+  severity: [{name: severity_map}]
+  date: [parse_date]

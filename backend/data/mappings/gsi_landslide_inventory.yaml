@@ -1,0 +1,40 @@
+# GSI field-validated landslide inventory (points). Shaped after the Bhukosh landslide point attribute table
+# (LS_ID / Date / Latitude / Longitude / State / District / Type of movement / Remarks). Adjust names to the downloaded file.
+dataset:
+  name: "GSI Field-Validated Landslide Inventory"
+  slug: gsi_landslide_inventory
+  provider: Bhukosh (GSI geoportal)
+  source_organization: Geological Survey of India
+  source_url: https://bhukosh.gsi.gov.in/Bhukosh/Public
+  dataset_version: "<fill from download, e.g. NLSM inventory 2024>"
+  license: "NDSAP (National Data Sharing and Accessibility Policy) - attribute Geological Survey of India"
+  attribution: "Landslide inventory © Geological Survey of India (Bhukosh)"
+  hazard_category: landslide
+  data_type: incidents
+  layer_type: landslide_inventory
+  provenance_type: historical
+  coverage_area: "<state(s) downloaded, e.g. Meghalaya, Assam>"
+  # coverage_bbox: [89.7, 24.1, 96.1, 28.3]   # derived from data when omitted
+  period_start: "<earliest event date>"
+  period_end: "<latest event date>"
+  crs: EPSG:4326
+  access_method: "Manual download from Bhukosh after registration; converted with ogr2ogr (see app/ingestion/sources/gsi.py)"
+format: csv
+mapping:
+  latitude: [Latitude, LATITUDE, lat, Y]
+  longitude: [Longitude, LONGITUDE, lon, long, X]
+  category: [Type_of_Mo, Type_of_movement, Landslide_Type, TYPE, category]
+  severity: [Damage, Severity, Impact]
+  date: [Date_of_Oc, Date_of_Occurrence, Event_Date, DATE, Year]
+  description: [Remarks, Description, Location, Place]
+  external_id: [LS_ID, Landslide_ID, OBJECTID, FID, id]
+transforms:
+  category: [strip, lowercase, {name: category_map, default: landslide}]
+  severity: [{name: severity_map}]
+  date: [{name: parse_date, formats: ["%d-%m-%Y", "%d/%m/%Y", "%Y-%m-%d", "%Y"]}]
+  description: [strip]
+defaults:
+  category: landslide
+  severity: 3          # severity is rarely published; recorded as default with original value null in metadata
+required: [geometry, date]
+duplicate_mode: skip-existing

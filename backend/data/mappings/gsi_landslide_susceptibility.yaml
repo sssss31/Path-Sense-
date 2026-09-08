@@ -1,0 +1,31 @@
+# GSI NLSM landslide susceptibility polygons (1:50K). Class field varies by state sheet (LSZ, Class, Susceptib, Sus_Class).
+dataset:
+  name: "GSI National Landslide Susceptibility Map"
+  slug: gsi_landslide_susceptibility
+  provider: Bhukosh (GSI geoportal)
+  source_organization: Geological Survey of India
+  source_url: https://bhukosh.gsi.gov.in/Bhukosh/Public
+  dataset_version: "<fill from download>"
+  license: "NDSAP - attribute Geological Survey of India"
+  attribution: "Landslide susceptibility © Geological Survey of India (NLSM, Bhukosh)"
+  hazard_category: landslide
+  data_type: risk_zones
+  layer_type: landslide_susceptibility
+  provenance_type: historical
+  coverage_area: "<state(s) downloaded>"
+  period_start: "<mapping campaign start>"
+  period_end: "<mapping campaign end>"
+  crs: EPSG:4326
+  access_method: "Manual download from Bhukosh after registration; shapefile -> GeoJSON via ogr2ogr"
+mapping:
+  category: [Hazard, hazard_type, category]
+  severity: [LSZ, LSZ_Class, Class, Susceptib, Sus_Class, Susceptibility, CLASS]
+  description: [Remarks, Description, Toposheet, Sheet_No]
+  external_id: [OBJECTID, FID, Zone_ID, id]
+transforms:
+  category: [strip, lowercase, {name: category_map, default: landslide}]
+  severity: [{name: susceptibility_map}]
+defaults:
+  category: landslide
+required: [geometry, severity]
+duplicate_mode: skip-existing

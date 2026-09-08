@@ -1,0 +1,58 @@
+dataset:
+  name: SYNTHETIC NRSC Flood Hazard Zonation - Assam
+  slug: test_nrsc_flood_hazard_assam
+  provider: Bhuvan / NDEM
+  source_organization: NRSC / ISRO
+  source_url: https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood_hz
+  dataset_version: synthetic-fixture-1
+  license: synthetic test fixture
+  attribution: "Flood hazard zonation \xA9 NRSC / ISRO (Bhuvan)"
+  hazard_category: flood
+  data_type: risk_zones
+  layer_type: flood_hazard
+  provenance_type: historical
+  coverage_area: "Guwahati\u2013Shillong corridor (synthetic fixture)"
+  coverage_bbox:
+  - 91.2
+  - 25.3
+  - 92.2
+  - 26.3
+  period_start: '2020-01-01'
+  period_end: '2024-12-31'
+  crs: EPSG:4326
+  access_method: 'Manual: vector export from NRSC/NDEM if provided; otherwise only
+    WMS visualisation is available'
+  source_metadata:
+    note: synthetic fixture shaped like the official schema; not real data
+mapping:
+  category:
+  - Hazard_Type
+  - hazard
+  - category
+  severity:
+  - Hazard_Cat
+  - Hazard_Class
+  - FHZ_Class
+  - Class
+  - Category
+  description:
+  - District
+  - Remarks
+  - Description
+  external_id:
+  - OBJECTID
+  - FID
+  - id
+transforms:
+  category:
+  - strip
+  - lowercase
+  - name: category_map
+    default: flood
+  severity:
+  - name: susceptibility_map
+defaults:
+  category: flood
+required:
+- geometry
+- severity

@@ -1,0 +1,30 @@
+# Template mapping for a historical incident register (CSV with coordinates).
+dataset:
+  name: "<Dataset name, e.g. NH-6 Road Incident Register>"
+  slug: "<unique-slug>"
+  provider: "<publisher>"
+  source_organization: "<e.g. State Disaster Management Authority>"
+  source_url: "<https://...>"
+  dataset_version: "<version>"
+  license: "<licence>"
+  hazard_category: landslide
+  data_type: incidents
+  provenance_type: historical
+  coverage_area: "<region>"
+  crs: EPSG:4326
+format: csv
+mapping:
+  latitude: [latitude, lat]
+  longitude: [longitude, lon, lng]
+  category: [category, type, hazard_type]
+  severity: [severity, class]
+  date: [occurred_at, event_date, date]
+  description: [description, remarks]
+  external_id: [id, incident_id]
+transforms:
+  category: [strip, lowercase, category_map]
+  severity: [{name: int_to_severity, scale: [1, 5]}]
+  date: [{name: parse_date, formats: ["%d/%m/%Y", "%Y-%m-%d"]}]
+defaults:
+  severity: 2
+required: [geometry, date]
