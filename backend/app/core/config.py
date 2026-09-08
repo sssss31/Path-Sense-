@@ -1,3 +1,4 @@
+import os
 from functools import lru_cache
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -5,7 +6,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "PathSense API"
     app_env: str = "development"
-    use_mock_data: bool = True
+    # Demo mode by default on a laptop; on a hosted container (Render sets RENDER=true, most PaaS set PORT) default to live providers
+    # unless USE_MOCK_DATA is set explicitly. Live mode without keys still uses OSRM/Nominatim/Open-Elevation; weather reports "unavailable".
+    use_mock_data: bool = not (os.environ.get("RENDER") or os.environ.get("RAILWAY_ENVIRONMENT") or os.environ.get("FLY_APP_NAME"))
     database_url: str = "sqlite+aiosqlite:///./pathsense.db"
     jwt_secret: str = "development-only-change-me"
     jwt_algorithm: str = "HS256"
