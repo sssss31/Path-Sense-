@@ -1,0 +1,9 @@
+frontend
+docs
+backend/.venv
+backend/__pycache__
+backend/.pytest_cache
+backend/*.db
+backend/data/gsi/reports
+.env
+.git
