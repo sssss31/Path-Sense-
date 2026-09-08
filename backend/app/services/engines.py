@@ -7,7 +7,7 @@ historical flood exposure. Only confirmed normalized hazard features add
 points; unavailable data adds nothing (confidence reports it instead).
 Explanations are derived from the same normalized values.
 """
-from app.core.domain import RISK_CONTRIBUTIONS, SUITABILITY_PENALTIES, SUSCEPTIBILITY_LABELS, VEHICLE_ALIASES, VEHICLE_PROFILES
+from app.core.domain import RISK_CONTRIBUTIONS, SUITABILITY_PENALTIES, SUSCEPTIBILITY_LABELS, UNAVAILABLE_FACTOR_SCORES, VEHICLE_ALIASES, VEHICLE_PROFILES
 from app.schemas.analysis import Accessibility, HazardExposure, Risk, Terrain, Weather
 
 # Kept for backward compatibility with earlier imports/tests.
@@ -80,8 +80,8 @@ class AccessibilityEngine:
     def calculate(self, road_quality: int, weather: Weather, terrain: Terrain, risk: Risk, vehicle_score: int, hazards: HazardExposure | None = None) -> Accessibility:
         factors = {
             "road_quality": road_quality,
-            "weather": max(0, 100 - weather.rainfall_probability // 2 - (15 if weather.visibility_km < 5 else 0)),
-            "terrain": max(0, 100 - round(terrain.average_slope * 4)),
+            "weather": UNAVAILABLE_FACTOR_SCORES["weather"] if weather.data_status == "unavailable" else max(0, 100 - weather.rainfall_probability // 2 - (15 if weather.visibility_km < 5 else 0)),
+            "terrain": UNAVAILABLE_FACTOR_SCORES["terrain"] if terrain.data_status == "unavailable" else max(0, 100 - round(terrain.average_slope * 4)),
             "historical_risk": max(0, 100 - risk.score),
             "current_disruption": max(0, 100 - risk.score // 2),
             "vehicle_suitability": vehicle_score,
@@ -96,11 +96,13 @@ def explain(road_quality: int, weather: Weather, terrain: Terrain, vehicle_score
     """Plain-language factor explanations built only from normalized values."""
     cfg = RISK_CONTRIBUTIONS
     negative, positive = [], []
-    if weather.rainfall_mm >= cfg["rainfall"]["heavy_mm"]: negative.append(f"Heavy rainfall ({weather.rainfall_mm} mm) along the route")
+    if weather.data_status == "unavailable": negative.append("Weather data unavailable (no live weather feed); rainfall risk not evaluated")
+    elif weather.rainfall_mm >= cfg["rainfall"]["heavy_mm"]: negative.append(f"Heavy rainfall ({weather.rainfall_mm} mm) along the route")
     elif weather.rainfall_mm >= cfg["rainfall"]["moderate_mm"]: negative.append(f"Intermittent rainfall ({weather.rainfall_mm} mm)")
     else: positive.append(f"Sampled rainfall below risk threshold ({weather.rainfall_mm} mm; {weather.condition.lower()} reported at the wettest sample point)" if weather.rainfall_mm > 0 else "No rainfall in the sampled weather")
-    if weather.visibility_km < cfg["visibility"]["threshold_km"]: negative.append(f"Low visibility ({weather.visibility_km} km)")
-    if terrain.average_slope >= cfg["terrain"]["steep_slope"]: negative.append(f"Steep terrain ({terrain.average_slope}° slope)")
+    if weather.data_status != "unavailable" and weather.visibility_km < cfg["visibility"]["threshold_km"]: negative.append(f"Low visibility ({weather.visibility_km} km)")
+    if terrain.data_status == "unavailable": negative.append("Terrain data unavailable; slope risk not evaluated")
+    elif terrain.average_slope >= cfg["terrain"]["steep_slope"]: negative.append(f"Steep terrain ({terrain.average_slope}° slope)")
     elif terrain.average_slope >= cfg["terrain"]["sustained_slope"]: negative.append(f"Sustained gradients ({terrain.average_slope}° slope)")
     else: positive.append(f"Lower slope ({terrain.average_slope}°)")
     if road_quality < cfg["road"]["poor_quality"]: negative.append(f"Variable road surface quality ({road_quality}/100)")

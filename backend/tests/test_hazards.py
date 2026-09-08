@@ -55,3 +55,24 @@ def test_hazard_labels_follow_claim_rules():
     assert hazard_label("flood", "estimated") == "Flood-Prone Area"
     assert "demo" in hazard_label("landslide", "simulated")
     assert hazard_label("landslide", "live") == "Live Landslide Alert"
+
+def test_live_analysis_survives_weather_and_terrain_provider_failure(monkeypatch):
+    """A missing OpenWeather key or a failing terrain provider must degrade to `unavailable`, never a 503."""
+    import asyncio
+    from app.core.config import get_settings
+    from app.schemas.analysis import AnalysisRequest, LocationInput
+    from app.services.analysis import RouteAnalysisService
+    class Broken:
+        async def weather_for_route(self, raw): raise RuntimeError("Weather unavailable")
+        async def terrain_for_route(self, raw): raise RuntimeError("boom")
+    settings = get_settings(); monkeypatch.setattr(settings, "use_mock_data", True)
+    service = RouteAnalysisService(); service.weather = Broken(); service.terrain = Broken(); monkeypatch.setattr(settings, "use_mock_data", False); monkeypatch.setattr(settings, "openweather_api_key", "")
+    result = asyncio.run(service.analyze(AnalysisRequest(source=LocationInput(name="Guwahati"), destination=LocationInput(name="Shillong"))))
+    best = next(r for r in result.routes if r.recommended)
+    assert best.weather.data_status == "unavailable" and best.terrain.data_status == "unavailable"
+    assert result.data_quality["weather"]["status"] == "unavailable" and "OPENWEATHER_API_KEY" in result.data_quality["weather"]["reason"]
+    assert best.accessibility.confidence_factors["weather"] == 0.0 and best.accessibility.factors["weather"] == 60
+    assert any("Weather data unavailable" in x for x in best.accessibility.explanations["negative"])
+    assert "unavailable (no live weather feed)" in result.explanation
+    assert next(s for s in result.data_sources if s.key == "weather").status == "unavailable"
+    monkeypatch.setattr(settings, "use_mock_data", True)

@@ -179,3 +179,6 @@ NOTIFICATION_RULES = {"departing_within_hours": 6, "recent_high_risk_days": 3, "
 GEOCODE_VIEWBOX = [88.0, 21.5, 97.5, 29.5]
 GEOCODE_FALLBACK_SUFFIXES = [", India", ", Assam, India", ", Meghalaya, India"]
 GEOCODE_SUGGEST_LIMIT = 6
+
+# Accessibility factor value used when a provider is unavailable: neutral, never an optimistic 100.
+UNAVAILABLE_FACTOR_SCORES = {"weather": 60, "terrain": 70}

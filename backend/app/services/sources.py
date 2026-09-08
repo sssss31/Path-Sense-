@@ -24,7 +24,7 @@ FAMILY_OF_LAYER = {"landslide_inventory": "landslide_inventory", "incidents": "l
 def mode_name() -> str:
     return "demo" if get_settings().use_mock_data else "live"
 
-def provider_sources(simulated: bool, weather_updated: datetime | None = None) -> list[DataSource]:
+def provider_sources(simulated: bool, weather_updated: datetime | None = None, weather_status: str = "live", terrain_status: str = "estimated", weather_reason: str | None = None, terrain_reason: str | None = None) -> list[DataSource]:
     now = datetime.now(timezone.utc)
     if simulated:
         return [DataSource(key="routing", name="Routing", organization="PathSense demo", status="simulated", provenance="simulated", note="Deterministic demo routes"),
@@ -33,8 +33,8 @@ def provider_sources(simulated: bool, weather_updated: datetime | None = None) -
                 DataSource(key="terrain", name="Terrain", organization="PathSense demo", status="simulated", provenance="simulated")]
     return [DataSource(key="routing", name="Routing", organization="OSRM (OpenStreetMap)", status="live", provenance="live", updated_at=now, attribution="© OpenStreetMap contributors"),
             DataSource(key="geocoding", name="Geocoding", organization="Nominatim (OpenStreetMap)", status="live", provenance="live", updated_at=now, attribution="© OpenStreetMap contributors"),
-            DataSource(key="weather", name="Weather", organization="OpenWeather", status="live", provenance="live", updated_at=weather_updated or now, note="Sampled at five route points"),
-            DataSource(key="terrain", name="Terrain", organization="Open-Elevation", status="estimated", provenance="estimated", note="Elevation sampled; slope estimated")]
+            DataSource(key="weather", name="Weather", organization="OpenWeather", status=weather_status, provenance=weather_status, updated_at=None if weather_status == "unavailable" else (weather_updated or now), note=weather_reason if weather_status == "unavailable" else "Sampled at five route points"),
+            DataSource(key="terrain", name="Terrain", organization="Open-Elevation", status=terrain_status, provenance=terrain_status, note=terrain_reason if terrain_status == "unavailable" else "Elevation sampled; slope estimated")]
 
 def dataset_sources_for_route(datasets: list[DatasetSource], points: list[Coordinate], exposure: HazardExposure | None) -> list[DataSource]:
     """One source row per hazard layer family, using registry facts and route coverage."""
