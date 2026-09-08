@@ -7,7 +7,8 @@ export const ROUTES={
   deliveries:"/deliveries",delivery:(id:string)=>`/deliveries/${id}`,deliveryTransitions:(id:string)=>`/deliveries/${id}/transitions`,deliveryExplain:(id:string)=>`/deliveries/${id}/explain`,transitionRules:"/deliveries/transitions",
   riskZones:"/risk-zones",incidents:"/incidents",assistant:"/assistant/chat",mapLayers:"/map-layers",readiness:"/system/readiness",userReports:"/user-reports",weather:"/system/weather",notifications:"/notifications",config:"/system/config",suggest:"/geocode/suggest",
 };
-const BASE=process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:8000/api/v1";
+import {apiBase} from "./api-base";
+
 export function token(){return typeof window==="undefined"?null:localStorage.getItem("pathsense_token")}
 
 export class ApiError extends Error{status:number;detail:unknown;constructor(status:number,detail:unknown,message:string){super(message);this.status=status;this.detail=detail}}
@@ -18,7 +19,7 @@ function describe(detail:unknown,status:number):string{
 }
 export async function api<T>(path:string,options:RequestInit={}):Promise<T>{
   const auth=token();
-  const response=await fetch(`${BASE}${path}`,{...options,headers:{"Content-Type":"application/json",...(auth?{Authorization:`Bearer ${auth}`}:{}),...options.headers}});
+  const response=await fetch(`${apiBase()}${path}`,{...options,headers:{"Content-Type":"application/json",...(auth?{Authorization:`Bearer ${auth}`}:{}),...options.headers}});
   if(response.status===204)return undefined as T;
   const body=await response.json().catch(()=>null);
   if(!response.ok){const detail=body?.detail??body;throw new ApiError(response.status,detail,describe(detail,response.status))}
