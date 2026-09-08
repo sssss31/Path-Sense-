@@ -10,7 +10,7 @@ Deploy the frontend with only `NEXT_PUBLIC_API_BASE_URL`. Gemini and weather key
 
 ## Vercel (frontend only)
 
-The repository is a monorepo (backend + frontend), so the root `vercel.json` tells Vercel to build only the Next.js app in `frontend/` with `@vercel/next`; `.vercelignore` keeps the backend out of the upload. Alternatively set **Root Directory = frontend** in the Vercel project settings and delete `vercel.json`.
+The repository is a monorepo (backend + frontend). In the Vercel project set **Settings → General → Root Directory = `frontend`** (Framework Preset then shows Next.js; leave Output Directory at its default). `frontend/vercel.json` pins the Next.js framework and build commands; `.vercelignore` keeps the backend out of the upload. Without the root directory Vercel treats the repo as a static site and fails with "No Output Directory named public".
 
 Vercel environment variables: `NEXT_PUBLIC_API_BASE_URL` (public backend URL + `/api/v1`) and optionally `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`. Redeploy after changing them; they are inlined at build time.
 
