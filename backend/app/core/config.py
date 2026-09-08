@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -36,6 +37,21 @@ class Settings(BaseSettings):
         "vehicle_suitability": .10,
     }
     model_config = SettingsConfigDict(env_file="../.env", extra="ignore")
+
+    @field_validator("database_url")
+    @classmethod
+    def normalize_database_url(cls, value: str) -> str:
+        """Accept managed-database URLs (Render/Neon/Supabase/Heroku style) and convert them for asyncpg.
+
+        postgres://... or postgresql://... -> postgresql+asyncpg://...; `sslmode=require` -> `ssl=require`.
+        """
+        if value.startswith("postgres://"):
+            value = "postgresql+asyncpg://" + value[len("postgres://"):]
+        elif value.startswith("postgresql://"):
+            value = "postgresql+asyncpg://" + value[len("postgresql://"):]
+        if "+asyncpg" in value and "sslmode=" in value:
+            value = value.replace("sslmode=require", "ssl=require").replace("sslmode=prefer", "ssl=prefer").replace("sslmode=disable", "ssl=disable")
+        return value
 
 @lru_cache
 def get_settings() -> Settings:

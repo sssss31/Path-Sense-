@@ -1,0 +1,39 @@
+# Render Blueprint: backend API (Docker) + managed PostgreSQL. Deploy via Render → New → Blueprint → this repo.
+# After the first deploy run once in the database shell:  CREATE EXTENSION IF NOT EXISTS postgis;
+services:
+  - type: web
+    name: pathsense-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/v1/system/health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: USE_MOCK_DATA
+        value: "false"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pathsense-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: '["https://YOUR-APP.vercel.app"]'
+      - key: DEMO_USER_EMAIL
+        value: demo@smartlogistics.local
+      - key: DEMO_USER_PASSWORD
+        sync: false
+      - key: OPENWEATHER_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.6-flash
+      - key: PORT
+        value: "8000"
+databases:
+  - name: pathsense-db
+    plan: free
+    postgresMajorVersion: "16"

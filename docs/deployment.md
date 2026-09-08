@@ -15,3 +15,13 @@ The repository is a monorepo (backend + frontend). In the Vercel project set **S
 Vercel environment variables: `NEXT_PUBLIC_API_BASE_URL` (public backend URL + `/api/v1`) and optionally `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`. Redeploy after changing them; they are inlined at build time.
 
 The FastAPI backend and PostGIS cannot run on Vercel: host the backend on Render/Railway/Fly/a VM (use `backend/Dockerfile`, which runs migrations) with a managed PostGIS (Neon or Supabase, run `CREATE EXTENSION postgis;` once), and set its `ALLOWED_ORIGINS` to the exact Vercel URL, e.g. `["https://your-app.vercel.app"]`, otherwise the browser reports "Failed to fetch" on login.
+
+## Backend on Render (one click)
+
+`render.yaml` at the repo root is a Render Blueprint: a Docker web service built from `backend/Dockerfile` plus a managed PostgreSQL. Render → New → Blueprint → pick this repo → set the secret values it asks for (`DEMO_USER_PASSWORD`, `OPENWEATHER_API_KEY`, `GEMINI_API_KEY`) → Apply. Then:
+
+1. Database → Shell (or psql) → `CREATE EXTENSION IF NOT EXISTS postgis;` (the entrypoint also tries this on every start).
+2. Service → Environment → `ALLOWED_ORIGINS` = `["https://<your-app>.vercel.app"]` (exact Vercel URL, no trailing slash).
+3. Copy the service URL (e.g. `https://pathsense-api.onrender.com`) into Vercel → `NEXT_PUBLIC_API_BASE_URL` = `https://pathsense-api.onrender.com/api/v1` → Redeploy the frontend.
+
+`DATABASE_URL` from Render/Neon/Supabase (`postgres://…?sslmode=require`) is normalised automatically to `postgresql+asyncpg://…?ssl=require`. The entrypoint runs migrations and seeds the synthetic hazard fixtures; the demo operator is created on startup. Free-tier services sleep when idle, so the first request after a pause takes ~30 s.
