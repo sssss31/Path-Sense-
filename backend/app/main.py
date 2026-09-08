@@ -66,8 +66,10 @@ async def lifespan(app: FastAPI):
         log.warning("startup_warning: %s", w)
     for p in diag["problems"]:
         log.error("startup_problem: %s", p)
-    if diag["problems"] and settings.sqlite_in_production_policy == "fail":
+    if diag["problems"] and settings.sqlite_in_production_policy == "fail" and diag["database"] == "sqlite":
         raise RuntimeError("Startup blocked: " + " | ".join(diag["problems"]))
+    elif diag["problems"]:
+        log.error("startup_problems_present: serving anyway so readiness can report them")
     diag["bootstrap"] = await bootstrap_database(diag)
     log.info("startup_bootstrap: %s", diag["bootstrap"])
     app.state.diagnostics = diag
